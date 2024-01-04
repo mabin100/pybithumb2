@@ -253,7 +253,24 @@ class Bithumb:
             return "ask", order_currency, resp['order_id'], payment_currency
         except Exception:
             return resp
-
+        
+    def get_all_outstanding_order(self, coin, payment_coin):
+        """
+        거래 미체결 수량 조회
+        :param order_desc: (주문Type, currency, 주문IDx)
+        :return          : 거래 미체결 수량
+        """
+        resp = None
+        try:
+            resp = self.api.orders(order_currency=coin,payment_currency=payment_coin)
+            if resp['status'] == '5600':
+                return None
+            # HACK : 빗썸이 데이터를 리스트에 넣어줌
+            # return resp['data'][0]['units_remaining']
+            return resp['data']
+        except Exception:
+            return resp
+    
     def get_outstanding_order(self, order_desc):
         """
         거래 미체결 수량 조회
@@ -269,7 +286,8 @@ class Bithumb:
             if resp['status'] == '5600':
                 return None
             # HACK : 빗썸이 데이터를 리스트에 넣어줌
-            return resp['data'][0]['units_remaining']
+            # return resp['data'][0]['units_remaining']
+            return resp['data']
         except Exception:
             return resp
 
